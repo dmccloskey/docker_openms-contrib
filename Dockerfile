@@ -11,7 +11,7 @@ LABEL maintainer Douglas McCloskey <dmccloskey87@gmail.com>
 USER root
 
 # OpenMS versions
-ENV OPENMS_CONTRIB_VERSION master
+ENV OPENMS_CONTRIB_VERSION 5911e41
 
 # Instal openMS dependencies
 RUN apt-get -y update && \

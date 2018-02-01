@@ -11,7 +11,7 @@ LABEL maintainer Douglas McCloskey <dmccloskey87@gmail.com>
 USER root
 
 # OpenMS versions
-ENV OPENMS_CONTRIB_VERSION 5911e41
+ENV OPENMS_CONTRIB_VERSION feature/boostLibs
 
 # Instal openMS dependencies
 RUN apt-get -y update && \
@@ -75,7 +75,7 @@ ENV PATH /usr/local/cmake-3.8.2/bin:$PATH
 
 # Clone the OpenMS/contrib repository
 RUN cd /usr/local/  && \
-    git clone https://github.com/OpenMS/contrib.git && \
+    git clone https://github.com/dmccloskey/contrib.git && \
     cd /usr/local/contrib && \
     git checkout ${OPENMS_CONTRIB_VERSION} && \
     mkdir /usr/local/contrib-build/  && \

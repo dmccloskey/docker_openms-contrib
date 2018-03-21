@@ -27,9 +27,9 @@ RUN apt-get -y update && \
 	# qtmultimedia5-dev \
 	# libqt5opengl5-dev \
 	# qtpositioning5-dev \
-	# qtdeclarative5-dev \
+	qtdeclarative5-dev \
 	# qtscript5-dev \
-	# libqt5svg5-dev \
+	libqt5svg5-dev \
     patch \
     libtool \
     make \

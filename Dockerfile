@@ -19,30 +19,37 @@ RUN apt-get -y update && \
     # cmake \
     g++ \
     autoconf \
-    qt4-dev-tools \
-	# qtconnectivity5-dev \
+	qtconnectivity5-dev \
 	qtbase5-dev \
-	# qtmobility-dev \
+	#qtmobility-dev \
 	qttools5-dev \
-	# qtmultimedia5-dev \
-	# libqt5opengl5-dev \
-	# qtpositioning5-dev \
+	qtmultimedia5-dev \
+	libqt5opengl5-dev \
+	qtpositioning5-dev \
 	qtdeclarative5-dev \
-	# qtscript5-dev \
+	qtscript5-dev \
 	libqt5svg5-dev \
+	libqt5serialport5-dev \
+	libqt5webkit5-dev \
+	libqt5x11extras5-dev \
+	libqt5xmlpatterns5-dev \
     patch \
     libtool \
     make \
     git \
-    software-properties-common \
-    python-software-properties \
-    libboost-all-dev \
-    libsvm-dev \
-    libglpk-dev \
-    libzip-dev \
-    zlib1g-dev \
-    libxerces-c-dev \
-    libbz2-dev && \
+    #libboost-all-dev \
+    #libsvm-dev \
+    #libglpk-dev \
+    #libzip-dev \
+    #libxerces-c-dev \
+    #zlib1g-dev \
+    #libbz2-dev \
+    #software-properties-common \
+    #python-software-properties \
+    # uninstall qt4
+    && \
+    apt-get purge qt4* libqt4* \
+    && \
     apt-get clean && \
     apt-get purge && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && \
@@ -53,13 +60,13 @@ RUN apt-get -y update && \
     cd cmake-3.8.2 && \
     ./configure && \
     make && \
-    # install proteowizard
-    cd /usr/local/  && \
-    ZIP=pwiz-bin-linux-x86_64-gcc48-release-3_0_9740.zip && \
-    wget https://github.com/BioDocker/software-archive/releases/download/proteowizard/$ZIP -O /tmp/$ZIP && \
-    unzip /tmp/$ZIP -d /home/user/pwiz/ && \
-    chmod -R 755 /home/user/pwiz/* && \
-    rm /tmp/$ZIP && \
+    ## install proteowizard
+    #cd /usr/local/  && \
+    #ZIP=pwiz-bin-linux-x86_64-gcc48-release-3_0_9740.zip && \
+    #wget https://github.com/BioDocker/software-archive/releases/download/proteowizard/$ZIP -O /tmp/$ZIP && \
+    #unzip /tmp/$ZIP -d /home/user/pwiz/ && \
+    #chmod -R 755 /home/user/pwiz/* && \
+    #rm /tmp/$ZIP && \
     # Install python packages using pip3
     pip3 install --no-cache-dir \
         autowrap \
@@ -67,8 +74,8 @@ RUN apt-get -y update && \
         wheel \
     &&pip3 install --upgrade
 
-# add pwiz to the path
-ENV PATH /usr/local/pwiz/pwiz-bin-linux-x86_64-gcc48-release-3_0_9740:$PATH
+## add pwiz to the path
+#ENV PATH /usr/local/pwiz/pwiz-bin-linux-x86_64-gcc48-release-3_0_9740:$PATH
 
 # add cmake to the path
 ENV PATH /usr/local/cmake-3.8.2/bin:$PATH

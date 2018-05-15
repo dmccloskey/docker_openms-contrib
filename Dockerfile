@@ -11,55 +11,53 @@ LABEL maintainer Douglas McCloskey <dmccloskey87@gmail.com>
 USER root
 
 # OpenMS versions
-ENV OPENMS_CONTRIB_VERSION 2c58ab6
+ENV OPENMS_CONTRIB_VERSION f74999a
 
-# Instal openMS dependencies
+# Install openMS dependencies
 RUN apt-get -y update && \
-    apt-get install -y \
+    apt-get install -y --no-install-recommends --no-install-suggests \
     # cmake \
     g++ \
     autoconf \
-	qtconnectivity5-dev \
-	qtbase5-dev \
-	#qtmobility-dev \
-	qttools5-dev \
-	qtmultimedia5-dev \
-	libqt5opengl5-dev \
-	qtpositioning5-dev \
-	qtdeclarative5-dev \
-	qtscript5-dev \
-	libqt5svg5-dev \
-	libqt5serialport5-dev \
-	libqt5webkit5-dev \
-	libqt5x11extras5-dev \
-	libqt5xmlpatterns5-dev \
     patch \
     libtool \
     make \
     git \
-    #libboost-all-dev \
-    #libsvm-dev \
-    #libglpk-dev \
-    #libzip-dev \
-    #libxerces-c-dev \
-    #zlib1g-dev \
-    #libbz2-dev \
+libgl1-mesa-dev \
+    libsvm-dev \
+    libglpk-dev \
+    libzip-dev \
+    libxerces-c-dev \
+    zlib1g-dev \
+    libbz2-dev \
     #software-properties-common \
     #python-software-properties \
-    # uninstall qt4
-    && \
-    apt-get purge qt4* libqt4* \
+    libboost-date-time1.54-dev \
+                                 libboost-iostreams1.54-dev \
+                                 libboost-regex1.54-dev \
+                                 libboost-math1.54-dev \
+libboost-random1.54-dev \
+	qtconnectivity5-dev \
+	qtbase5-dev \
+	qttools5-dev \
+	qtmultimedia5-dev \
+	libqt5opengl5-dev \
+	qtdeclarative5-dev \
+	libqt5svg5-dev \
+	libqt5webkit5-dev \
     && \
     apt-get clean && \
     apt-get purge && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && \
+
     # install cmake from source
     cd /usr/local/ && \
     wget http://www.cmake.org/files/v3.8/cmake-3.8.2.tar.gz && \
     tar xf cmake-3.8.2.tar.gz && \
     cd cmake-3.8.2 && \
     ./configure && \
-    make && \
+    make -j8 && \
+
     ## install proteowizard
     #cd /usr/local/  && \
     #ZIP=pwiz-bin-linux-x86_64-gcc48-release-3_0_9740.zip && \
@@ -67,6 +65,7 @@ RUN apt-get -y update && \
     #unzip /tmp/$ZIP -d /home/user/pwiz/ && \
     #chmod -R 755 /home/user/pwiz/* && \
     #rm /tmp/$ZIP && \
+
     # Install python packages using pip3
     pip3 install --no-cache-dir \
         autowrap \
@@ -88,17 +87,11 @@ RUN cd /usr/local/  && \
     mkdir /usr/local/contrib-build/  && \
     # Build OpenMS/contrib
     cd /usr/local/contrib-build/  && \
-    cmake -DBUILD_TYPE=SEQAN ../contrib && \
-    cmake -DBUILD_TYPE=WILDMAGIC ../contrib && \
-    cmake -DBUILD_TYPE=EIGEN ../contrib && \
-    cmake -DBUILD_TYPE=COINOR ../contrib && \
-    cmake -DBUILD_TYPE=ZLIB ../contrib && \
-    cmake -DBUILD_TYPE=BZIP2 ../contrib && \
-    cmake -DBUILD_TYPE=GLPK ../contrib && \
-    cmake -DBUILD_TYPE=LIBSVM ../contrib && \
-    cmake -DBUILD_TYPE=SQLITE ../contrib && \
-    cmake -DBUILD_TYPE=XERCESC ../contrib && \
-    cmake -DBUILD_TYPE=BOOST ../contrib
+    cmake -DBUILD_TYPE=SEQAN ../contrib && rm -rf archives src && \
+    cmake -DBUILD_TYPE=WILDMAGIC ../contrib && rm -rf archives src && \
+    cmake -DBUILD_TYPE=EIGEN ../contrib && rm -rf archives src && \
+    cmake -DBUILD_TYPE=COINOR ../contrib && rm -rf archives src && \
+    cmake -DBUILD_TYPE=SQLITE ../contrib && rm -rf archives src
 
 # switch back to user
 WORKDIR $HOME

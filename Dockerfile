@@ -23,28 +23,33 @@ RUN apt-get -y update && \
     libtool \
     make \
     git \
-libgl1-mesa-dev \
     libsvm-dev \
     libglpk-dev \
     libzip-dev \
     libxerces-c-dev \
     zlib1g-dev \
     libbz2-dev \
-    #software-properties-common \
-    #python-software-properties \
+    # Boost libraries
     libboost-date-time1.54-dev \
     libboost-iostreams1.54-dev \
     libboost-regex1.54-dev \
     libboost-math1.54-dev \
     libboost-random1.54-dev \
-	qtconnectivity5-dev \
-	qtbase5-dev \
-	qttools5-dev \
-	qtmultimedia5-dev \
-	libqt5opengl5-dev \
-	qtdeclarative5-dev \
-	libqt5svg5-dev \
-	libqt5webkit5-dev \
+    # QT5 libraries
+    software-properties-common \
+    python-software-properties \
+    libgl1-mesa-dev && \
+    add-apt-repository ppa:beineri/opt-qt571-trusty && \
+    apt-get -y update && \
+    apt-get install -y qt57base qt57webengine qt57svg libgl1-mesa-dev \
+	# qtconnectivity5-dev \
+	# qtbase5-dev \
+	# qttools5-dev \
+	# qtmultimedia5-dev \
+	# libqt5opengl5-dev \
+	# qtdeclarative5-dev \
+	# libqt5svg5-dev \
+	# libqt5webkit5-dev \
     && \
     apt-get clean && \
     apt-get purge && \
@@ -68,7 +73,7 @@ libgl1-mesa-dev \
 
     # Install python packages using pip3
     pip3 install --no-cache-dir \
-        autowrap \
+        autowrap==0.14.0 \
         nose \
         wheel \
     &&pip3 install --upgrade

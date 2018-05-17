@@ -33,10 +33,10 @@ libgl1-mesa-dev \
     #software-properties-common \
     #python-software-properties \
     libboost-date-time1.54-dev \
-                                 libboost-iostreams1.54-dev \
-                                 libboost-regex1.54-dev \
-                                 libboost-math1.54-dev \
-libboost-random1.54-dev \
+    libboost-iostreams1.54-dev \
+    libboost-regex1.54-dev \
+    libboost-math1.54-dev \
+    libboost-random1.54-dev \
 	qtconnectivity5-dev \
 	qtbase5-dev \
 	qttools5-dev \

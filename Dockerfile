@@ -70,25 +70,6 @@ RUN apt-get -y update && \
     # ./install_patch.pl --silent --accept-eula && \
     ./install_patch.pl --silent --accept-eula && \
 
-    # Install OpenMS dependencies from source (COINOR)
-    cd /usr/local/ && \
-    wget https://www.coin-or.org/download/source/CoinMP/CoinMP-1.8.3.tgz && \
-    tar -xzvf CoinMP-1.8.3.tgz && \
-    cd CoinMP-1.8.3 && \
-    ./configure && \
-    make -j8 && \
-
-    # Install OpenMS dependencies from source (eigen)
-    cd /usr/local/ && \
-    wget -O eigen-3.3.4.tar.bz2 http://bitbucket.org/eigen/eigen/get/3.3.4.tar.bz2 && \
-    mkdir eigen-3.3.4 && \
-    tar --strip-components=1 -xvjf eigen-3.3.4.tar.bz2 -C eigen-3.3.4 && \
-    cd eigen-3.3.4 && \
-    mkdir build && \
-    cd build && \
-    cmake .. && \
-    make -j8 && \
-
     ## install proteowizard
     #cd /usr/local/  && \
     #ZIP=pwiz-bin-linux-x86_64-gcc48-release-3_0_9740.zip && \
@@ -112,8 +93,28 @@ ENV PATH /usr/local/cmake-3.8.2/bin:$PATH
 ENV LD_LIBRARY_PATH /usr/local/cuda-9.2/lib64:/usr/local/CoinMP-1.8.3/lib:/usr/local/eigen-3.3.4/lib:/usr/lib:$LD_LIBRARY_PATH
 ENV PATH /usr/local/cuda-9.2/bin:/usr/local/CoinMP-1.8.3/bin:/usr/local/eigen-3.3.4/bin:/usr/bin:$PATH
 
-# Clone the OpenMS/contrib repository
+
 RUN cd /usr/local/  && \
+    # Install OpenMS dependencies from source (COINOR)
+    wget https://www.coin-or.org/download/source/CoinMP/CoinMP-1.8.3.tgz && \
+    tar -xzvf CoinMP-1.8.3.tgz && \
+    cd CoinMP-1.8.3 && \
+    ./configure && \
+    make -j8 && \
+
+    # Install OpenMS dependencies from source (eigen)
+    cd /usr/local/ && \
+    wget -O eigen-3.3.4.tar.bz2 http://bitbucket.org/eigen/eigen/get/3.3.4.tar.bz2 && \
+    mkdir eigen-3.3.4 && \
+    tar --strip-components=1 -xvjf eigen-3.3.4.tar.bz2 -C eigen-3.3.4 && \
+    cd eigen-3.3.4 && \
+    mkdir build && \
+    cd build && \
+    cmake .. && \
+    make -j8 && \
+
+    # Clone the OpenMS/contrib repository
+    cd /usr/local/ && \
     git clone https://github.com/OpenMS/contrib.git && \
     cd /usr/local/contrib && \
     git checkout ${OPENMS_CONTRIB_VERSION} && \

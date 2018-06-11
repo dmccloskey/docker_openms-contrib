@@ -115,6 +115,7 @@ RUN cd /usr/local/  && \
     cd /usr/local/contrib-build/  && \
     cmake -DBUILD_TYPE=SEQAN ../contrib && rm -rf archives src && \
     cmake -DBUILD_TYPE=WILDMAGIC ../contrib && rm -rf archives src && \
+    cmake -DBUILD_TYPE=EIGEN ../contrib && rm -rf archives src && \
     cmake -DBUILD_TYPE=COINOR ../contrib && rm -rf archives src
     # cmake -DBUILD_TYPE=SQLITE ../contrib && rm -rf archives src
 

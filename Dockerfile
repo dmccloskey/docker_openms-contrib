@@ -58,73 +58,72 @@ RUN apt-get -y update && \
     make -j8 && \
 
     # install Cuda
+    cd /usr/local/ && \
     wget https://developer.nvidia.com/compute/cuda/9.2/Prod/local_installers/cuda_9.2.88_396.26_linux && \
     chmod +x cuda_9.2.88_396.26_linux && \
     ./cuda_9.2.88_396.26_linux --tar mxvf && \
-    ./cuda-installer.pl --silent --driver --toolkit 
+    ./cuda-installer.pl --silent --driver --toolkit && \
+    wget https://developer.nvidia.com/compute/cuda/9.2/Prod/patches/1/cuda_9.2.88.1_linux && \
+    chmod +x cuda_9.2.88.1_linux && \
+    ./cuda_9.2.88.1_linux --tar mxvf && \
+    ./install_patch.pl --silent --accept-eula && \
+
+    # Install OpenMS dependencies from source (COINOR)
+    cd /usr/local/ && \
+    wget https://www.coin-or.org/download/source/CoinMP/CoinMP-1.8.3.tgz && \
+    tar -xzvf CoinMP-1.8.3.tgz && \
+    cd CoinMP-1.8.3 && \
+    ./configure && \
+    make -j8 && \
+
+    # Install OpenMS dependencies from source (eigen)
+    cd /usr/local/ && \
+    wget -O eigen-3.3.4.tar.bz2 http://bitbucket.org/eigen/eigen/get/3.3.4.tar.bz2 && \
+    mkdir eigen-3.3.4 && \
+    tar --strip-components=1 -xvjf eigen-3.3.4.tar.bz2 -C eigen-3.3.4 && \
+    cd eigen-3.3.4 && \
+    mkdir build && \
+    cd build && \
+    cmake .. && \
+    make -j8 && \
+
+    ## install proteowizard
+    #cd /usr/local/  && \
+    #ZIP=pwiz-bin-linux-x86_64-gcc48-release-3_0_9740.zip && \
+    #wget https://github.com/BioDocker/software-archive/releases/download/proteowizard/$ZIP -O /tmp/$ZIP && \
+    #unzip /tmp/$ZIP -d /home/user/pwiz/ && \
+    #chmod -R 755 /home/user/pwiz/* && \
+    #rm /tmp/$ZIP && \
+
+    # Install python packages using pip3
+    pip3 install --no-cache-dir \
+        autowrap==0.14.0 \
+        nose \
+        wheel \
+    &&pip3 install --upgrade
+
+## add pwiz to the path
+#ENV PATH /usr/local/pwiz/pwiz-bin-linux-x86_64-gcc48-release-3_0_9740:$PATH
+
+# add cmake to the path
+ENV PATH /usr/local/cmake-3.8.2/bin:$PATH
+ENV LD_LIBRARY_PATH /usr/local/CoinMP-1.8.3/lib:/usr/local/eigen-3.3.4/lib:/usr/lib:$LD_LIBRARY_PATH
+ENV PATH /usr/local/CoinMP-1.8.3/bin:/usr/local/eigen-3.3.4/bin:/usr/bin:$PATH
+
+# Clone the OpenMS/contrib repository
+RUN cd /usr/local/  && \
+    git clone https://github.com/OpenMS/contrib.git && \
+    cd /usr/local/contrib && \
+    git checkout ${OPENMS_CONTRIB_VERSION} && \
+    mkdir /usr/local/contrib-build/  && \
+    # Build OpenMS/contrib
+    cd /usr/local/contrib-build/  && \
+    cmake -DBUILD_TYPE=SEQAN ../contrib && rm -rf archives src && \
+    cmake -DBUILD_TYPE=WILDMAGIC ../contrib && rm -rf archives src 
     # && \
-#     wget https://developer.nvidia.com/compute/cuda/9.2/Prod/patches/1/cuda_9.2.88.1_linux && \
-#     chmod +x cuda_9.2.88.1_linux && \
-#     ./cuda_9.2.88.1_linux --tar mxvf && \
-#     # ./install_patch.pl --silent --accept-eula && \
-#     ./install_patch.pl --silent --accept-eula && \
-
-#     # Install OpenMS dependencies from source (COINOR)
-#     cd /usr/local/ && \
-#     wget https://www.coin-or.org/download/source/CoinMP/CoinMP-1.8.3.tgz && \
-#     tar -xzvf CoinMP-1.8.3.tgz && \
-#     cd CoinMP-1.8.3 && \
-#     ./configure && \
-#     make -j8 && \
-
-#     # Install OpenMS dependencies from source (eigen)
-#     cd /usr/local/ && \
-#     wget -O eigen-3.3.4.tar.bz2 http://bitbucket.org/eigen/eigen/get/3.3.4.tar.bz2 && \
-#     mkdir eigen-3.3.4 && \
-#     tar --strip-components=1 -xvjf eigen-3.3.4.tar.bz2 -C eigen-3.3.4 && \
-#     cd eigen-3.3.4 && \
-#     mkdir build && \
-#     cd build && \
-#     cmake .. && \
-#     make -j8 && \
-
-#     ## install proteowizard
-#     #cd /usr/local/  && \
-#     #ZIP=pwiz-bin-linux-x86_64-gcc48-release-3_0_9740.zip && \
-#     #wget https://github.com/BioDocker/software-archive/releases/download/proteowizard/$ZIP -O /tmp/$ZIP && \
-#     #unzip /tmp/$ZIP -d /home/user/pwiz/ && \
-#     #chmod -R 755 /home/user/pwiz/* && \
-#     #rm /tmp/$ZIP && \
-
-#     # Install python packages using pip3
-#     pip3 install --no-cache-dir \
-#         autowrap==0.14.0 \
-#         nose \
-#         wheel \
-#     &&pip3 install --upgrade
-
-# ## add pwiz to the path
-# #ENV PATH /usr/local/pwiz/pwiz-bin-linux-x86_64-gcc48-release-3_0_9740:$PATH
-
-# # add cmake to the path
-# ENV PATH /usr/local/cmake-3.8.2/bin:$PATH
-# ENV LD_LIBRARY_PATH /usr/local/CoinMP-1.8.3/lib:/usr/local/eigen-3.3.4/lib:/usr/lib:$LD_LIBRARY_PATH
-# ENV PATH /usr/local/CoinMP-1.8.3/bin:/usr/local/eigen-3.3.4/bin:/usr/bin:$PATH
-
-# # Clone the OpenMS/contrib repository
-# RUN cd /usr/local/  && \
-#     git clone https://github.com/OpenMS/contrib.git && \
-#     cd /usr/local/contrib && \
-#     git checkout ${OPENMS_CONTRIB_VERSION} && \
-#     mkdir /usr/local/contrib-build/  && \
-#     # Build OpenMS/contrib
-#     cd /usr/local/contrib-build/  && \
-#     cmake -DBUILD_TYPE=SEQAN ../contrib && rm -rf archives src && \
-#     cmake -DBUILD_TYPE=WILDMAGIC ../contrib && rm -rf archives src 
-#     # && \
-#     # cmake -DBUILD_TYPE=EIGEN ../contrib && rm -rf archives src && \
-#     # cmake -DBUILD_TYPE=COINOR ../contrib && rm -rf archives src && \
-#     # cmake -DBUILD_TYPE=SQLITE ../contrib && rm -rf archives src
+    # cmake -DBUILD_TYPE=EIGEN ../contrib && rm -rf archives src && \
+    # cmake -DBUILD_TYPE=COINOR ../contrib && rm -rf archives src && \
+    # cmake -DBUILD_TYPE=SQLITE ../contrib && rm -rf archives src
 
 # switch back to user
 WORKDIR $HOME

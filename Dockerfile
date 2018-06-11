@@ -29,7 +29,9 @@ RUN apt-get -y update && \
     libxerces-c-dev \
     zlib1g-dev \
     libbz2-dev \
+    libsqlite3-dev \
     # Boost libraries
+    libboost-test1.54-dev \
     libboost-date-time1.54-dev \
     libboost-iostreams1.54-dev \
     libboost-regex1.54-dev \
@@ -42,14 +44,6 @@ RUN apt-get -y update && \
     add-apt-repository ppa:beineri/opt-qt571-trusty && \
     apt-get -y update && \
     apt-get install -y qt57base qt57webengine qt57svg libgl1-mesa-dev \
-	# qtconnectivity5-dev \
-	# qtbase5-dev \
-	# qttools5-dev \
-	# qtmultimedia5-dev \
-	# libqt5opengl5-dev \
-	# qtdeclarative5-dev \
-	# libqt5svg5-dev \
-	# libqt5webkit5-dev \
     && \
     apt-get clean && \
     apt-get purge && \
@@ -61,6 +55,35 @@ RUN apt-get -y update && \
     tar xf cmake-3.8.2.tar.gz && \
     cd cmake-3.8.2 && \
     ./configure && \
+    make -j8 && \
+
+    # install Cuda
+    wget https://developer.nvidia.com/compute/cuda/9.2/Prod/local_installers/cuda_9.2.88_396.26_linux && \
+    chmod +x cuda_9.2.88_396.26_linux && \
+    ./cuda_9.2.88_396.26_linux --tar mxvf && \
+    ./cuda-installer.pl --silent --accept-eula --driver --toolkit && \
+    wget https://developer.nvidia.com/compute/cuda/9.2/Prod/patches/1/cuda_9.2.88.1_linux && \
+    chmod +x cuda_9.2.88.1_linux && \
+    ./cuda_9.2.88.1_linux --tar mxvf && \
+    ./install_patch.pl --silent --accept-eula && \
+
+    # Install OpenMS dependencies from source (COINOR)
+    cd /usr/local/ && \
+    wget https://www.coin-or.org/download/source/CoinMP/CoinMP-1.8.3.tgz && \
+    tar -xzvf CoinMP-1.8.3.tgz && \
+    cd CoinMP-1.8.3 && \
+    ./configure && \
+    make -j8 && \
+
+    # Install OpenMS dependencies from source (eigen)
+    cd /usr/local/ && \
+    wget -O eigen-3.3.4.tar.bz2 http://bitbucket.org/eigen/eigen/get/3.3.4.tar.bz2 && \
+    mkdir eigen-3.3.4 && \
+    tar --strip-components=1 -xvjf eigen-3.3.4.tar.bz2 -C eigen-3.3.4 && \
+    cd eigen-3.3.4 && \
+    mkdir build && \
+    cd build && \
+    cmake .. && \
     make -j8 && \
 
     ## install proteowizard
@@ -83,6 +106,8 @@ RUN apt-get -y update && \
 
 # add cmake to the path
 ENV PATH /usr/local/cmake-3.8.2/bin:$PATH
+ENV LD_LIBRARY_PATH /usr/local/CoinMP-1.8.3/lib:/usr/local/eigen-3.3.4/lib:/usr/lib:$LD_LIBRARY_PATH
+ENV PATH /usr/local/CoinMP-1.8.3/bin:/usr/local/eigen-3.3.4/bin:/usr/bin:$PATH
 
 # Clone the OpenMS/contrib repository
 RUN cd /usr/local/  && \
@@ -93,10 +118,11 @@ RUN cd /usr/local/  && \
     # Build OpenMS/contrib
     cd /usr/local/contrib-build/  && \
     cmake -DBUILD_TYPE=SEQAN ../contrib && rm -rf archives src && \
-    cmake -DBUILD_TYPE=WILDMAGIC ../contrib && rm -rf archives src && \
-    cmake -DBUILD_TYPE=EIGEN ../contrib && rm -rf archives src && \
-    cmake -DBUILD_TYPE=COINOR ../contrib && rm -rf archives src && \
-    cmake -DBUILD_TYPE=SQLITE ../contrib && rm -rf archives src
+    cmake -DBUILD_TYPE=WILDMAGIC ../contrib && rm -rf archives src 
+    # && \
+    # cmake -DBUILD_TYPE=EIGEN ../contrib && rm -rf archives src && \
+    # cmake -DBUILD_TYPE=COINOR ../contrib && rm -rf archives src && \
+    # cmake -DBUILD_TYPE=SQLITE ../contrib && rm -rf archives src
 
 # switch back to user
 WORKDIR $HOME

@@ -95,15 +95,7 @@ ENV PATH /usr/local/cuda-9.2/bin:/usr/local/CoinMP-1.8.3/bin:/usr/local/eigen-3.
 
 
 RUN cd /usr/local/  && \
-    # Install OpenMS dependencies from source (COINOR)
-    wget https://www.coin-or.org/download/source/CoinMP/CoinMP-1.8.3.tgz && \
-    tar -xzvf CoinMP-1.8.3.tgz && \
-    cd CoinMP-1.8.3 && \
-    ./configure && \
-    make -j8 && \
-
     # Install OpenMS dependencies from source (eigen)
-    cd /usr/local/ && \
     wget -O eigen-3.3.4.tar.bz2 http://bitbucket.org/eigen/eigen/get/3.3.4.tar.bz2 && \
     mkdir eigen-3.3.4 && \
     tar --strip-components=1 -xvjf eigen-3.3.4.tar.bz2 -C eigen-3.3.4 && \
@@ -122,10 +114,8 @@ RUN cd /usr/local/  && \
     # Build OpenMS/contrib
     cd /usr/local/contrib-build/  && \
     cmake -DBUILD_TYPE=SEQAN ../contrib && rm -rf archives src && \
-    cmake -DBUILD_TYPE=WILDMAGIC ../contrib && rm -rf archives src 
-    # && \
-    # cmake -DBUILD_TYPE=EIGEN ../contrib && rm -rf archives src && \
-    # cmake -DBUILD_TYPE=COINOR ../contrib && rm -rf archives src && \
+    cmake -DBUILD_TYPE=WILDMAGIC ../contrib && rm -rf archives src && \
+    cmake -DBUILD_TYPE=COINOR ../contrib && rm -rf archives src
     # cmake -DBUILD_TYPE=SQLITE ../contrib && rm -rf archives src
 
 # switch back to user

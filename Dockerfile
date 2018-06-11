@@ -61,10 +61,11 @@ RUN apt-get -y update && \
     wget https://developer.nvidia.com/compute/cuda/9.2/Prod/local_installers/cuda_9.2.88_396.26_linux && \
     chmod +x cuda_9.2.88_396.26_linux && \
     ./cuda_9.2.88_396.26_linux --tar mxvf && \
-    ./cuda-installer.pl --silent --accept-eula --driver --toolkit && \
+    ./cuda-installer.pl --silent --driver --toolkit && \
     wget https://developer.nvidia.com/compute/cuda/9.2/Prod/patches/1/cuda_9.2.88.1_linux && \
     chmod +x cuda_9.2.88.1_linux && \
     ./cuda_9.2.88.1_linux --tar mxvf && \
+    # ./install_patch.pl --silent --accept-eula && \
     ./install_patch.pl --silent --accept-eula && \
 
     # Install OpenMS dependencies from source (COINOR)

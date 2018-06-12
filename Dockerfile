@@ -90,23 +90,11 @@ RUN apt-get -y update && \
 
 # add cmake to the path
 ENV PATH /usr/local/cmake-3.8.2/bin:$PATH
-ENV LD_LIBRARY_PATH /usr/local/cuda-9.2/lib64:/usr/local/CoinMP-1.8.3/lib:/usr/local/eigen-3.3.4/lib:/usr/lib:$LD_LIBRARY_PATH
-ENV PATH /usr/local/cuda-9.2/bin:/usr/local/CoinMP-1.8.3/bin:/usr/local/eigen-3.3.4/bin:/usr/bin:$PATH
+ENV LD_LIBRARY_PATH /usr/local/cuda-9.2/lib64:$LD_LIBRARY_PATH
+ENV PATH /usr/local/cuda-9.2/bin:$PATH
 
-
-RUN cd /usr/local/  && \
-    # Install OpenMS dependencies from source (eigen)
-    wget -O eigen-3.3.4.tar.bz2 http://bitbucket.org/eigen/eigen/get/3.3.4.tar.bz2 && \
-    mkdir eigen-3.3.4 && \
-    tar --strip-components=1 -xvjf eigen-3.3.4.tar.bz2 -C eigen-3.3.4 && \
-    cd eigen-3.3.4 && \
-    mkdir build && \
-    cd build && \
-    cmake .. && \
-    make -j8 && \
-
-    # Clone the OpenMS/contrib repository
-    cd /usr/local/ && \
+# Clone the OpenMS/contrib repository
+RUN cd /usr/local/ && \
     git clone https://github.com/OpenMS/contrib.git && \
     cd /usr/local/contrib && \
     git checkout ${OPENMS_CONTRIB_VERSION} && \
